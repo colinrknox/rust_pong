@@ -12,6 +12,7 @@ struct Paddle {
     width: f64,
     position: Vec2d<f64>,
     color: [f32; 4],
+    velocity_multiplier: f64,
 }
 
 struct Ball {
@@ -27,22 +28,24 @@ impl Paddle {
     fn new(position: PaddlePosition) -> Self {
         match position {
             PaddlePosition::Left => Paddle {
-                height: 20.0,
-                width: 8.0,
-                position: [0.0, 0.0],
+                height: 30.0,
+                width: 10.0,
+                position: [80.0, 0.0],
                 color: [1.0, 1.0, 1.0, 0.99],
+                velocity_multiplier: 0.0,
             },
             PaddlePosition::Right => Paddle {
-                height: 20.0,
-                width: 8.0,
+                height: 30.0,
+                width: 10.0,
                 position: [1200.0, 0.0],
                 color: [1.0, 1.0, 1.0, 0.99],
+                velocity_multiplier: 0.0,
             },
         }
     }
 
-    fn down(&mut self) {
-        self.position[1] += 1.0;
+    fn update(&mut self) {
+        self.position[1] += self.velocity_multiplier;
     }
 }
 
@@ -57,15 +60,23 @@ fn main() {
     objects.push(Paddle::new(PaddlePosition::Right));
     objects.push(Paddle::new(PaddlePosition::Left));
 
+    // Need to tighten input logic and then contain the paddle within the window
     while let Some(event) = window.next() {
         if let Event::Input(Input::Button(args), _) = &event {
-            if let Button::Keyboard(key) = args.button {
-                if key == Key::S {
-                    objects[0].down();
-                    objects[1].down();
+            if args.state == ButtonState::Press {
+                if let Button::Keyboard(key) = args.button {
+                    match key {
+                        Key::S => objects[1].velocity_multiplier = 2.0,
+                        Key::W => objects[1].velocity_multiplier = -2.0,
+                        _ => (),
+                    }
                 }
+            } else if args.state == ButtonState::Release {
+                objects[1].velocity_multiplier = 0.0;
             }
         }
+
+        objects[1].update();
 
         window.draw_2d(&event, |ctx, renderer, _device| {
             clear(color::TRANSPARENT, renderer);
