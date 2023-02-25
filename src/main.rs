@@ -11,17 +11,20 @@ fn main() {
     let mut board = rust_pong::game::GameBoard {
         entities: Vec::new(),
     };
+
     board
         .entities
-        .push(Box::new(Paddle::new(GameEntityType::Paddle(
+        .push(Box::new(GameEntity::new(GameEntityType::Paddle(
             PaddleType::Right,
         ))));
     board
         .entities
-        .push(Box::new(Paddle::new(GameEntityType::Paddle(
+        .push(Box::new(GameEntity::new(GameEntityType::Paddle(
             PaddleType::Left,
         ))));
-    board.entities.push(Box::new(Ball::new()));
+    board
+        .entities
+        .push(Box::new(GameEntity::new(GameEntityType::Ball)));
 
     // Need to tighten input logic and then contain the paddle within the window
     while let Some(event) = window.next() {
@@ -29,17 +32,17 @@ fn main() {
             if args.state == ButtonState::Press {
                 if let Button::Keyboard(key) = args.button {
                     match key {
-                        Key::S => board.entities[1].update_velocity([0.0, 2.0]),
-                        Key::W => board.entities[1].update_velocity([0.0, -2.0]),
+                        Key::S => board.entities[1].motion.set_velocity([0.0, 2.0]),
+                        Key::W => board.entities[1].motion.set_velocity([0.0, -2.0]),
                         _ => (),
                     }
                 }
             } else if args.state == ButtonState::Release {
-                board.entities[1].update_velocity([0.0, 0.0]);
+                board.entities[1].motion.set_velocity([0.0, 0.0]);
             }
         }
 
-        board.entities[1].update_position();
+        board.entities[1].update();
 
         window.draw_2d(&event, |ctx, renderer, _device| {
             clear(color::TRANSPARENT, renderer);
