@@ -38,8 +38,6 @@ impl MotionPhysics {
     }
 }
 
-pub fn resolve_collisions(objects: &mut Vec<MotionPhysics>, y_min: f64, y_max: f64) {}
-
 #[cfg(test)]
 mod test {
     use super::*;

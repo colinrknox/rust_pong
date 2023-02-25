@@ -10,23 +10,11 @@ pub fn run() {
         .build()
         .expect("Could not create window.");
 
-    let mut board = GameBoard {
-        entities: Vec::new(),
-    };
+    let mut game = Game::new(1280.0, 960.0);
 
-    board
-        .entities
-        .push(Box::new(GameEntity::new(GameEntityType::Paddle(
-            PaddleType::Right,
-        ))));
-    board
-        .entities
-        .push(Box::new(GameEntity::new(GameEntityType::Paddle(
-            PaddleType::Left,
-        ))));
-    board
-        .entities
-        .push(Box::new(GameEntity::new(GameEntityType::Ball)));
+    game.add_entity(GameEntity::new(GameEntityType::Paddle(PaddleType::Right)));
+    game.add_entity(GameEntity::new(GameEntityType::Paddle(PaddleType::Left)));
+    game.add_entity(GameEntity::new(GameEntityType::Ball));
 
     // Need to tighten input logic and then contain the paddle within the window
     while let Some(event) = window.next() {
@@ -34,22 +22,22 @@ pub fn run() {
             if args.state == ButtonState::Press {
                 if let Button::Keyboard(key) = args.button {
                     match key {
-                        Key::S => board.entities[1].motion.set_velocity([0.0, 2.0]),
-                        Key::W => board.entities[1].motion.set_velocity([0.0, -2.0]),
+                        Key::S => game.entities[1].motion.set_velocity([0.0, 2.0]),
+                        Key::W => game.entities[1].motion.set_velocity([0.0, -2.0]),
                         _ => (),
                     }
                 }
             } else if args.state == ButtonState::Release {
-                board.entities[1].motion.set_velocity([0.0, 0.0]);
+                game.entities[1].motion.set_velocity([0.0, 0.0]);
             }
         }
 
-        board.entities[1].update();
+        game.entities[1].update();
 
         window.draw_2d(&event, |ctx, renderer, _device| {
             clear(color::TRANSPARENT, renderer);
 
-            for obj in &mut board.entities {
+            for obj in &mut game.entities {
                 let size = obj.get_size();
                 let color = obj.get_color();
                 rectangle(color, size, ctx.transform, renderer);

@@ -13,7 +13,9 @@ pub enum PaddleType {
     Right,
 }
 
-pub struct GameBoard {
+pub struct Game {
+    pub height: f64,
+    pub width: f64,
     pub entities: Vec<Box<GameEntity>>,
 }
 
@@ -22,6 +24,23 @@ pub struct GameEntity {
     width: f64,
     pub motion: MotionPhysics,
     color: [f32; 4],
+}
+
+impl Game {
+    pub fn new(height: f64, width: f64) -> Game {
+        Game {
+            height,
+            width,
+            entities: Vec::new(),
+        }
+    }
+    pub fn add_entity(&mut self, entity: GameEntity) {
+        self.entities.push(Box::new(entity));
+    }
+
+    pub fn resolve_collisions(&mut self) {
+        //
+    }
 }
 
 impl GameEntity {
@@ -45,7 +64,6 @@ impl GameEntity {
                 motion: MotionPhysics::new([640.0, 480.0]),
                 color: [1.0, 1.0, 1.0, 0.99],
             },
-            _ => panic!("Invalid paddle type being passed to paddle constructor"),
         }
     }
 
