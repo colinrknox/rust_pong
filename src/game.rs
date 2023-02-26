@@ -43,7 +43,7 @@ impl Pong {
         self.paddle_left.update();
         self.paddle_right.update();
         self.ball.update();
-        // self.resolve_collisions();
+        self.resolve_collisions();
     }
 
     pub fn update_left_paddle_velocity(&mut self, velocity: Vec2d<f64>) {
@@ -56,7 +56,17 @@ impl Pong {
 
     fn resolve_collisions(&mut self) {
         // TODO resolve y bound collisions for the paddles as well as x-y for the ball and paddle-ball
-        todo!()
+        keep_paddle_on_board(&mut self.paddle_left, self.height);
+        keep_paddle_on_board(&mut self.paddle_right, self.height);
+    }
+}
+
+fn keep_paddle_on_board(paddle: &mut GameEntity, height: f64) {
+    if paddle.motion.get_position()[1] < 0.0 {
+        paddle.motion.set_y_position(0.0);
+    }
+    if paddle.motion.get_position()[1] > height - paddle.height {
+        paddle.motion.set_y_position(height - paddle.height);
     }
 }
 

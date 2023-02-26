@@ -11,7 +11,7 @@ pub fn run() {
         .expect("Could not create window.");
     window.set_max_fps(30);
 
-    let mut game = Pong::new(1280.0, 960.0);
+    let mut game = Pong::new(height, width);
 
     // Need to tighten input logic and then contain the paddle within the window
     while let Some(event) = window.next() {
