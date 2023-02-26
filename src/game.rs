@@ -50,15 +50,48 @@ impl Pong {
         self.paddle_left.motion.set_velocity(velocity);
     }
 
+    pub fn update_right_paddle_velocity(&mut self, velocity: Vec2d<f64>) {
+        self.paddle_right.motion.set_velocity(velocity);
+    }
+
     pub fn get_entities(&self) -> Vec<&GameEntity> {
         vec![&self.paddle_right, &self.paddle_left, &self.ball]
     }
 
     fn resolve_collisions(&mut self) {
-        // TODO resolve y bound collisions for the paddles as well as x-y for the ball and paddle-ball
         keep_paddle_on_board(&mut self.paddle_left, self.height);
         keep_paddle_on_board(&mut self.paddle_right, self.height);
+        keep_ball_on_board(&mut self.ball, self.height, self.width);
+        resolve_paddle_ball_collision(&mut self.paddle_left, &mut self.ball);
+        resolve_paddle_ball_collision(&mut self.paddle_right, &mut self.ball);
     }
+}
+
+fn resolve_paddle_ball_collision(paddle: &GameEntity, ball: &mut GameEntity) {
+    let mut ball_position = ball.motion.get_position();
+    let mut ball_velocity = ball.motion.get_velocity();
+    let paddle_position = paddle.motion.get_position();
+
+    if ball_position[0] < paddle_position[0] + paddle.width
+        && ball_position[0] >= paddle_position[0]
+        && ball_position[1] >= paddle_position[1]
+        && ball_position[1] <= paddle_position[1] + paddle.height
+    {
+        ball_position[0] = paddle_position[0] + paddle.width;
+        ball_velocity[0] = ball_velocity[0] * -1.0;
+    }
+
+    if ball_position[0] < paddle_position[0] + paddle.width
+        && ball_position[0] >= paddle_position[0]
+        && ball_position[1] + ball.height >= paddle_position[1]
+        && ball_position[1] + ball.height <= paddle_position[1] + paddle.height
+    {
+        ball_position[0] = paddle_position[0] + paddle.width;
+        ball_velocity[0] = ball_velocity[0] * -1.0;
+    }
+
+    ball.motion.set_position(ball_position);
+    ball.motion.set_velocity(ball_velocity);
 }
 
 fn keep_paddle_on_board(paddle: &mut GameEntity, height: f64) {
@@ -70,27 +103,58 @@ fn keep_paddle_on_board(paddle: &mut GameEntity, height: f64) {
     }
 }
 
+/*
+ * Need to add scoring
+ */
+fn keep_ball_on_board(ball: &mut GameEntity, height: f64, width: f64) {
+    let mut ball_position = ball.motion.get_position();
+    let mut ball_velocity = ball.motion.get_velocity();
+    if ball_position[0] < 0.0 {
+        ball_position[0] = 0.0;
+        ball_velocity[0] = ball_velocity[0] * -1.0;
+    }
+    if ball_position[0] > width - ball.width {
+        ball_position[0] = width - ball.width;
+        ball_velocity[0] = ball_velocity[0] * -1.0;
+    }
+    if ball_position[1] < 0.0 {
+        ball_position[1] = 0.0;
+        ball_velocity[1] = ball_velocity[1] * -1.0;
+    }
+    if ball_position[1] > height - ball.height {
+        ball_position[1] = height - ball.height;
+        ball_velocity[1] = ball_velocity[1] * -1.0;
+    }
+
+    ball.motion.set_position(ball_position);
+    ball.motion.set_velocity(ball_velocity);
+}
+
 impl GameEntity {
     pub fn new(entity_type: GameEntityType) -> Self {
         match entity_type {
             GameEntityType::Paddle(PaddleType::Left) => GameEntity {
-                height: 30.0,
-                width: 10.0,
-                motion: MotionPhysics::new([80.0, 0.0]),
+                height: 56.0,
+                width: 8.0,
+                motion: MotionPhysics::new([44.0, 0.0]),
                 color: [1.0, 1.0, 1.0, 0.99],
             },
             GameEntityType::Paddle(PaddleType::Right) => GameEntity {
-                height: 30.0,
-                width: 10.0,
-                motion: MotionPhysics::new([1200.0, 0.0]),
-                color: [1.0, 1.0, 1.0, 0.99],
-            },
-            GameEntityType::Ball => GameEntity {
-                height: 8.0,
+                height: 56.0,
                 width: 8.0,
-                motion: MotionPhysics::new([640.0, 480.0]),
+                motion: MotionPhysics::new([976.0, 0.0]),
                 color: [1.0, 1.0, 1.0, 0.99],
             },
+            GameEntityType::Ball => {
+                let mut ball = GameEntity {
+                    height: 8.0,
+                    width: 8.0,
+                    motion: MotionPhysics::new([512.0, 256.0]),
+                    color: [1.0, 1.0, 1.0, 0.99],
+                };
+                ball.motion.set_velocity([4.0, -4.0]);
+                ball
+            }
         }
     }
 

@@ -25,8 +25,16 @@ impl MotionPhysics {
         self.velocity[1] += self.acceleration[1];
     }
 
+    pub fn set_x_position(&mut self, x_coord: f64) {
+        self.set_position([x_coord, self.position[1]])
+    }
+
     pub fn set_y_position(&mut self, y_coord: f64) {
-        self.position[1] = y_coord;
+        self.set_position([self.position[0], y_coord])
+    }
+
+    pub fn set_position(&mut self, coords: Vec2d<f64>) {
+        self.position = coords;
     }
 
     pub fn get_position(&self) -> Vec2d<f64> {
@@ -35,6 +43,10 @@ impl MotionPhysics {
 
     pub fn set_velocity(&mut self, velocity: Vec2d<f64>) {
         self.velocity = velocity;
+    }
+
+    pub fn get_velocity(&self) -> Vec2d<f64> {
+        self.velocity
     }
 
     pub fn set_acceleration(&mut self, acceleration: Vec2d<f64>) {
