@@ -10,11 +10,7 @@ pub fn run() {
         .build()
         .expect("Could not create window.");
 
-    let mut game = Game::new(1280.0, 960.0);
-
-    game.add_entity(GameEntity::new(GameEntityType::Paddle(PaddleType::Right)));
-    game.add_entity(GameEntity::new(GameEntityType::Paddle(PaddleType::Left)));
-    game.add_entity(GameEntity::new(GameEntityType::Ball));
+    let mut game = Pong::new(1280.0, 960.0);
 
     // Need to tighten input logic and then contain the paddle within the window
     while let Some(event) = window.next() {
@@ -22,22 +18,22 @@ pub fn run() {
             if args.state == ButtonState::Press {
                 if let Button::Keyboard(key) = args.button {
                     match key {
-                        Key::S => game.entities[1].motion.set_velocity([0.0, 2.0]),
-                        Key::W => game.entities[1].motion.set_velocity([0.0, -2.0]),
+                        Key::S => game.update_left_paddle_velocity([0.0, 2.0]),
+                        Key::W => game.update_left_paddle_velocity([0.0, -2.0]),
                         _ => (),
                     }
                 }
             } else if args.state == ButtonState::Release {
-                game.entities[1].motion.set_velocity([0.0, 0.0]);
+                game.update_left_paddle_velocity([0.0, 0.0]);
             }
         }
 
-        game.entities[1].update();
+        game.update();
 
         window.draw_2d(&event, |ctx, renderer, _device| {
             clear(color::TRANSPARENT, renderer);
 
-            for obj in &mut game.entities {
+            for obj in game.get_entities() {
                 let size = obj.get_size();
                 let color = obj.get_color();
                 rectangle(color, size, ctx.transform, renderer);

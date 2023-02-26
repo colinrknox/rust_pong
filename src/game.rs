@@ -13,10 +13,12 @@ pub enum PaddleType {
     Right,
 }
 
-pub struct Game {
+pub struct Pong {
     pub height: f64,
     pub width: f64,
-    pub entities: Vec<Box<GameEntity>>,
+    paddle_left: GameEntity,
+    paddle_right: GameEntity,
+    ball: GameEntity,
 }
 
 pub struct GameEntity {
@@ -26,16 +28,29 @@ pub struct GameEntity {
     color: [f32; 4],
 }
 
-impl Game {
-    pub fn new(height: f64, width: f64) -> Game {
-        Game {
+impl Pong {
+    pub fn new(height: f64, width: f64) -> Pong {
+        Pong {
             height,
             width,
-            entities: Vec::new(),
+            paddle_left: GameEntity::new(GameEntityType::Paddle(PaddleType::Left)),
+            paddle_right: GameEntity::new(GameEntityType::Paddle(PaddleType::Right)),
+            ball: GameEntity::new(GameEntityType::Ball),
         }
     }
-    pub fn add_entity(&mut self, entity: GameEntity) {
-        self.entities.push(Box::new(entity));
+
+    pub fn update(&mut self) {
+        self.paddle_left.update();
+        self.paddle_right.update();
+        self.ball.update();
+    }
+
+    pub fn update_left_paddle_velocity(&mut self, velocity: Vec2d<f64>) {
+        self.paddle_left.motion.set_velocity(velocity);
+    }
+
+    pub fn get_entities(&self) -> Vec<&GameEntity> {
+        vec![&self.paddle_right, &self.paddle_left, &self.ball]
     }
 
     pub fn resolve_collisions(&mut self) {
