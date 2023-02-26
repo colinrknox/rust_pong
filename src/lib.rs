@@ -9,6 +9,7 @@ pub fn run() {
         .exit_on_esc(true)
         .build()
         .expect("Could not create window.");
+    window.set_max_fps(30);
 
     let mut game = Pong::new(1280.0, 960.0);
 
