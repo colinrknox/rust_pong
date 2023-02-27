@@ -9,9 +9,8 @@ pub fn run() {
         .exit_on_esc(true)
         .build()
         .expect("Could not create window.");
-    window.set_max_fps(30);
-    window.set_ups(30);
-    window.set_ups_reset(0);
+    window.set_max_fps(60);
+    window.set_ups(60);
 
     let mut game = Pong::new(height, width);
 
@@ -21,10 +20,10 @@ pub fn run() {
             if args.state == ButtonState::Press {
                 if let Button::Keyboard(key) = args.button {
                     match key {
-                        Key::S => game.update_left_paddle_velocity([0.0, 4.0]),
-                        Key::W => game.update_left_paddle_velocity([0.0, -4.0]),
-                        Key::Down => game.update_right_paddle_velocity([0.0, 4.0]),
-                        Key::Up => game.update_right_paddle_velocity([0.0, -4.0]),
+                        Key::S => game.update_left_paddle_velocity([0.0, PADDLE_VELOCITY]),
+                        Key::W => game.update_left_paddle_velocity([0.0, -PADDLE_VELOCITY]),
+                        Key::Down => game.update_right_paddle_velocity([0.0, PADDLE_VELOCITY]),
+                        Key::Up => game.update_right_paddle_velocity([0.0, -PADDLE_VELOCITY]),
                         _ => (),
                     }
                 }

@@ -25,13 +25,14 @@ impl Position {
             width,
         }
     }
+
     pub fn has_collided(&self, other: &Position) -> bool {
         let x2 = self.x + self.width;
         let y2 = self.y + self.height;
         let other_x2 = other.x + other.width;
         let other_y2 = other.y + other.height;
 
-        // Check if collision with left side of paddle
+        // Check if collision with left side of other object
         if other.x <= x2
             && x2 <= other_x2
             && ((y2 > other.y && y2 < other_y2) || (self.y > other.y && self.y < other_y2))
@@ -39,7 +40,7 @@ impl Position {
             return true;
         }
 
-        // Check if collision with right side of paddle
+        // Check if collision with right side of other object
         if other_x2 >= self.x
             && self.x >= other.x
             && ((y2 > other.y && y2 < other_y2) || (self.y > other.y && self.y < other_y2))

@@ -1,7 +1,11 @@
 use graphics::math::Vec2d;
 use kinematics::MotionPhysics;
+use rand::prelude::*;
 
 pub mod kinematics;
+
+pub const PADDLE_VELOCITY: f64 = 3.0;
+pub const BALL_VELOCITY: f64 = 2.0;
 
 pub enum GameEntityType {
     Paddle(PaddleType),
@@ -73,10 +77,16 @@ impl Pong {
                 .get_position()
                 .has_collided(&self.paddle_left.motion.get_position())
         {
-            self.ball.motion.set_velocity([
-                self.ball.motion.get_velocity()[0] * -1.0,
-                self.ball.motion.get_velocity()[1],
-            ]);
+            let mut rng = thread_rng();
+            let range: f64 = rng.gen_range(-BALL_VELOCITY..BALL_VELOCITY);
+            let sign = if self.ball.motion.get_velocity()[0] < 0.0 {
+                1.0
+            } else {
+                -1.0
+            };
+            self.ball
+                .motion
+                .set_velocity([(7.0 - range.powi(2)).sqrt() * sign, range]);
         }
     }
 }
@@ -94,7 +104,7 @@ fn keep_paddle_on_board(paddle: &mut GameEntity, height: f64) {
  * Need to add scoring
  */
 fn keep_ball_on_board(ball: &mut GameEntity, height: f64, width: f64) {
-    let mut ball_position = ball.motion.get_position();
+    let ball_position = ball.motion.get_position();
     let mut position = [ball_position.x, ball_position.y];
     let mut ball_velocity = ball.motion.get_velocity();
     if position[0] < 0.0 {
@@ -140,7 +150,9 @@ impl GameEntity {
                     motion: MotionPhysics::new([512.0, 256.0], 8.0, 8.0),
                     color: [1.0, 1.0, 1.0, 0.99],
                 };
-                ball.motion.set_velocity([4.0, -4.0]);
+                let range: f64 = thread_rng().gen_range(-BALL_VELOCITY..BALL_VELOCITY);
+                ball.motion
+                    .set_velocity([(7.0 - range.powi(2)).sqrt(), range]);
                 ball
             }
         }
