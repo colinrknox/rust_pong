@@ -23,6 +23,8 @@ pub fn run() {
                     match key {
                         Key::S => game.update_left_paddle_velocity([0.0, 4.0]),
                         Key::W => game.update_left_paddle_velocity([0.0, -4.0]),
+                        Key::Down => game.update_right_paddle_velocity([0.0, 4.0]),
+                        Key::Up => game.update_right_paddle_velocity([0.0, -4.0]),
                         _ => (),
                     }
                 }
@@ -31,6 +33,8 @@ pub fn run() {
                     match key {
                         Key::S => game.update_left_paddle_velocity([0.0, 0.0]),
                         Key::W => game.update_left_paddle_velocity([0.0, 0.0]),
+                        Key::Up => game.update_right_paddle_velocity([0.0, 0.0]),
+                        Key::Down => game.update_right_paddle_velocity([0.0, 0.0]),
                         _ => (),
                     }
                 }
