@@ -37,7 +37,7 @@ pub async fn macroquad_run() {
         game.update();
 
         clear_background(BLACK);
-        for entity in game.get_entities() {
+        for entity in &game.get_entities()[0..2] {
             let size = entity.get_size();
             draw_rectangle(
                 size[0] as f32,
@@ -47,6 +47,13 @@ pub async fn macroquad_run() {
                 WHITE,
             );
         }
+
+        draw_circle(
+            game.get_entities()[2].get_size()[0] as f32,
+            game.get_entities()[2].get_size()[1] as f32,
+            game.get_entities()[2].get_size()[2] as f32,
+            WHITE,
+        );
 
         draw_text_ex(
             &game.get_player_one_score().to_string(),
