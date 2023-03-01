@@ -1,12 +1,13 @@
-use graphics::math::Vec2d;
 use kinematics::MotionPhysics;
+use kinematics::Vec2d;
 use rand::prelude::*;
 
 pub mod kinematics;
 
 // Constants for object properties like the paddles, ball, game size etc.
-pub const PADDLE_VELOCITY: f64 = 2.0;
+pub const PADDLE_VELOCITY: f64 = 2.5;
 pub const BALL_VELOCITY: f64 = 2.0;
+pub const BALL_ANGULAR_VELOCITY: f64 = 6.0;
 pub const PADDLE_HEIGHT: f64 = 38.0;
 pub const PADDLE_WIDTH: f64 = 8.0;
 pub const BALL_SIZE: f64 = 7.0;
@@ -28,8 +29,6 @@ pub enum PaddleType {
 }
 
 pub struct Pong {
-    height: f64,
-    width: f64,
     score_player_one: usize,
     score_player_two: usize,
     paddle_left: Paddle,
@@ -50,8 +49,6 @@ pub struct Paddle {
 impl Pong {
     pub fn new() -> Pong {
         Pong {
-            height: PONG_HEIGHT,
-            width: PONG_WIDTH,
             score_player_one: 0,
             score_player_two: 0,
             paddle_left: Paddle::new(PaddleType::Left),
@@ -120,7 +117,7 @@ impl Pong {
             };
             self.ball
                 .motion
-                .set_velocity([(7.0 - range.powi(2)).sqrt() * sign, range]);
+                .set_velocity([(BALL_ANGULAR_VELOCITY - range.powi(2)).sqrt() * sign, range]);
         }
     }
 
@@ -168,7 +165,7 @@ impl Ball {
         };
         let range: f64 = thread_rng().gen_range(-BALL_VELOCITY..BALL_VELOCITY);
         ball.motion
-            .set_velocity([(7.0 - range.powi(2)).sqrt(), range]);
+            .set_velocity([(BALL_ANGULAR_VELOCITY - range.powi(2)).sqrt(), range]);
         ball
     }
 }

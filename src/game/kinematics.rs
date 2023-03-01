@@ -1,4 +1,4 @@
-use graphics::math::Vec2d;
+pub type Vec2d<T> = [T; 2];
 
 /// # MotionPhysics
 ///
@@ -22,7 +22,7 @@ pub enum CollisionWall {
 }
 
 impl MotionObject {
-    pub fn new(top_left: Vec2d, height: f64, width: f64) -> MotionObject {
+    pub fn new(top_left: Vec2d<f64>, height: f64, width: f64) -> MotionObject {
         MotionObject {
             x: top_left[0],
             y: top_left[1],
