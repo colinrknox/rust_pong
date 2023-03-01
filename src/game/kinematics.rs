@@ -4,21 +4,26 @@ use graphics::math::Vec2d;
 ///
 /// Uses the basics of kinematics to compute motion
 pub struct MotionPhysics {
-    position: Position,
+    object: MotionObject,
     velocity: Vec2d<f64>,
     acceleration: Vec2d<f64>,
 }
 
-pub struct Position {
+pub struct MotionObject {
     pub x: f64,
     pub y: f64,
     height: f64,
     width: f64,
 }
 
-impl Position {
-    pub fn new(top_left: Vec2d, height: f64, width: f64) -> Position {
-        Position {
+pub enum CollisionWall {
+    Vertical,
+    Horizontal,
+}
+
+impl MotionObject {
+    pub fn new(top_left: Vec2d, height: f64, width: f64) -> MotionObject {
+        MotionObject {
             x: top_left[0],
             y: top_left[1],
             height,
@@ -26,7 +31,35 @@ impl Position {
         }
     }
 
-    pub fn has_collided(&self, other: &Position) -> bool {
+    fn update_position_with_bounds(
+        &mut self,
+        position: &mut Vec2d<f64>,
+        height: f64,
+        width: f64,
+    ) -> Option<CollisionWall> {
+        let mut result = None;
+        if position[0] < 0.0 {
+            position[0] = 0.0;
+            result = Some(CollisionWall::Horizontal);
+        }
+        if position[0] > width - self.width {
+            position[0] = width - self.width;
+            result = Some(CollisionWall::Horizontal);
+        }
+        if position[1] < 0.0 {
+            position[1] = 0.0;
+            result = Some(CollisionWall::Vertical);
+        }
+        if position[1] > height - self.height {
+            position[1] = height - self.height;
+            result = Some(CollisionWall::Vertical);
+        }
+        self.x = position[0];
+        self.y = position[1];
+        result
+    }
+
+    pub fn has_collided(&self, other: &MotionObject) -> bool {
         let x2 = self.x + self.width;
         let y2 = self.y + self.height;
         let other_x2 = other.x + other.width;
@@ -50,39 +83,56 @@ impl Position {
 
         return false;
     }
+
+    pub fn get_height(&self) -> f64 {
+        self.height
+    }
+
+    pub fn get_width(&self) -> f64 {
+        self.width
+    }
+
+    // Format for piston window draw rectangle
+    pub fn get_size(&self) -> [f64; 4] {
+        [self.x, self.y, self.width, self.height]
+    }
 }
 
 impl MotionPhysics {
     pub fn new(position: Vec2d<f64>, height: f64, width: f64) -> MotionPhysics {
         MotionPhysics {
-            position: Position::new(position, height, width),
+            object: MotionObject::new(position, height, width),
             velocity: [0.0, 0.0],
             acceleration: [0.0, 0.0],
         }
     }
 
-    pub fn update(&mut self) {
-        self.position.x += self.velocity[0];
-        self.position.y += self.velocity[1];
+    pub fn update_with_bounds(&mut self, height: f64, width: f64) -> Option<CollisionWall> {
+        let mut new_position = [
+            self.object.x + self.velocity[0],
+            self.object.y + self.velocity[1],
+        ];
         self.velocity[0] += self.acceleration[0];
         self.velocity[1] += self.acceleration[1];
+        self.object
+            .update_position_with_bounds(&mut new_position, height, width)
     }
 
     pub fn set_x(&mut self, x_coord: f64) {
-        self.position.x = x_coord;
+        self.object.x = x_coord;
     }
 
-    pub fn set_y_position(&mut self, y_coord: f64) {
-        self.position.y = y_coord;
+    pub fn set_y_coord(&mut self, y_coord: f64) {
+        self.object.y = y_coord;
     }
 
-    pub fn set_position(&mut self, coords: Vec2d<f64>) {
-        self.position.x = coords[0];
-        self.position.y = coords[1];
+    pub fn set_coords(&mut self, coords: Vec2d<f64>) {
+        self.object.x = coords[0];
+        self.object.y = coords[1];
     }
 
-    pub fn get_position(&self) -> &Position {
-        &self.position
+    pub fn get_motion_object(&self) -> &MotionObject {
+        &self.object
     }
 
     pub fn set_velocity(&mut self, velocity: Vec2d<f64>) {
@@ -116,7 +166,7 @@ mod test {
         motion.velocity = [2.0, -2.0];
         motion.acceleration = [-0.5, 0.5];
         motion.update();
-        assert_eq!([2.0, -2.0], motion.position);
+        assert_eq!([2.0, -2.0], [motion.object.x, motion.object.y]);
         assert_eq!([1.5, -1.5], motion.velocity);
     }
 
