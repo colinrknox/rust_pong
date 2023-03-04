@@ -5,9 +5,9 @@ use rand::prelude::*;
 pub mod kinematics;
 
 // Constants for object properties like the paddles, ball, game size etc.
-pub const PADDLE_VELOCITY: f64 = 2.5;
-pub const BALL_VELOCITY: f64 = 2.0;
-pub const BALL_ANGULAR_VELOCITY: f64 = 6.0;
+pub const PADDLE_VELOCITY: f64 = 8.0;
+pub const BALL_VELOCITY: f64 = 7.0;
+pub const BALL_ANGULAR_VELOCITY: f64 = 49.0;
 pub const PADDLE_HEIGHT: f64 = 38.0;
 pub const PADDLE_WIDTH: f64 = 8.0;
 pub const BALL_SIZE: f64 = 5.0;
