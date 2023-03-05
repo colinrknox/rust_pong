@@ -6,6 +6,7 @@ use macroquad::window::Conf;
 
 pub mod game;
 
+/// Driver function for the game, runs at approximately 60 ticks per second
 pub async fn macroquad_run() {
     let font = load_ttf_font("assets/blippo_bold.ttf").await.unwrap();
 
@@ -86,6 +87,7 @@ pub async fn macroquad_run() {
     }
 }
 
+// Macroquad window configuration data
 pub fn config() -> Conf {
     Conf {
         window_title: "Pong".to_string(),

@@ -1,7 +1,3 @@
-// fn main() {
-//     rust_pong::macroquad_run().await.unwrap();
-// }
-
 use macroquad::window::Conf;
 
 #[macroquad::main(config)]
