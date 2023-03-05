@@ -13,7 +13,7 @@ pub async fn macroquad_run() {
 
     let mut prev = Instant::now();
     loop {
-        if prev.elapsed() > Duration::from_millis(33) {
+        if prev.elapsed() > Duration::from_millis(16) {
             if is_key_down(KeyCode::Escape) {
                 break;
             }

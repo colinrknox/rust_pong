@@ -5,9 +5,9 @@ use rand::prelude::*;
 pub mod kinematics;
 
 // Constants for object properties like the paddles, ball, game size etc.
-pub const PADDLE_VELOCITY: f64 = 8.0;
-pub const BALL_VELOCITY: f64 = 7.0;
-pub const BALL_ANGULAR_VELOCITY: f64 = 49.0;
+pub const PADDLE_VELOCITY: f64 = 7.0;
+pub const BALL_VELOCITY_Y: f64 = 5.0;
+pub const BALL_VELOCITY_MAX: f64 = 49.0;
 pub const PADDLE_HEIGHT: f64 = 38.0;
 pub const PADDLE_WIDTH: f64 = 8.0;
 pub const BALL_SIZE: f64 = 5.0;
@@ -97,28 +97,44 @@ impl Pong {
     }
 
     fn resolve_collisions(&mut self) {
+        let mut rng = thread_rng();
+        let y_velocity = rng.gen_range(-BALL_VELOCITY_Y..BALL_VELOCITY_Y);
+        let sign = if self.ball.motion.get_velocity()[0] < 0.0 {
+            1.0
+        } else {
+            -1.0
+        };
         if self
             .ball
             .motion
             .get_motion_object()
             .has_collided(&self.paddle_right.motion.get_motion_object())
-            || self
-                .ball
-                .motion
-                .get_motion_object()
-                .has_collided(&self.paddle_left.motion.get_motion_object())
         {
-            let mut rng = thread_rng();
-            let range: f64 = rng.gen_range(-BALL_VELOCITY..BALL_VELOCITY);
-            let sign = if self.ball.motion.get_velocity()[0] < 0.0 {
-                1.0
-            } else {
-                -1.0
-            };
-            self.ball
-                .motion
-                .set_velocity([(BALL_ANGULAR_VELOCITY - range.powi(2)).sqrt() * sign, range]);
+            self.ball.motion.set_velocity([
+                (BALL_VELOCITY_MAX - y_velocity.powi(2)).sqrt() * sign,
+                y_velocity,
+            ]);
+            self.set_ball_x(self.paddle_right.motion.get_motion_object().x);
         }
+        if self
+            .ball
+            .motion
+            .get_motion_object()
+            .has_collided(&self.paddle_left.motion.get_motion_object())
+        {
+            self.ball.motion.set_velocity([
+                (BALL_VELOCITY_MAX - y_velocity.powi(2)).sqrt() * sign,
+                y_velocity,
+            ]);
+            self.set_ball_x(
+                self.paddle_left.motion.get_motion_object().get_width()
+                    + self.paddle_left.motion.get_motion_object().x,
+            );
+        }
+    }
+
+    fn set_ball_x(&mut self, x: f64) {
+        self.ball.motion.set_x(x)
     }
 
     fn reset_to_initial_conditions(&mut self) {
@@ -163,9 +179,13 @@ impl Ball {
             motion: MotionPhysics::new([PONG_WIDTH / 2.0, PONG_HEIGHT / 2.0], BALL_SIZE, BALL_SIZE),
             color: GAME_OBJECT_COLOR,
         };
-        let range: f64 = thread_rng().gen_range(-BALL_VELOCITY..BALL_VELOCITY);
-        ball.motion
-            .set_velocity([(BALL_ANGULAR_VELOCITY - range.powi(2)).sqrt(), range]);
+        let mut rng = thread_rng();
+        let y_velocity: f64 = rng.gen_range(-BALL_VELOCITY_Y..BALL_VELOCITY_Y);
+        let sign = if y_velocity < 0.0 { -1.0 } else { 1.0 };
+        ball.motion.set_velocity([
+            (BALL_VELOCITY_MAX - y_velocity.powi(2)).sqrt() * sign,
+            y_velocity,
+        ]);
         ball
     }
 }
