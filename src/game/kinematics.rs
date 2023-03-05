@@ -16,6 +16,7 @@ pub struct MotionObject {
     width: f64,
 }
 
+#[derive(Debug, PartialEq, Ord, PartialOrd, Eq)]
 pub enum CollisionWall {
     Vertical,
     Horizontal,
@@ -161,18 +162,23 @@ mod test {
     }
 
     #[test]
-    fn test_update() {
-        let mut motion = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
-        motion.velocity = [2.0, -2.0];
-        motion.acceleration = [-0.5, 0.5];
-        motion.update();
-        assert_eq!([2.0, -2.0], [motion.object.x, motion.object.y]);
-        assert_eq!([1.5, -1.5], motion.velocity);
+    fn test_update_with_bounds_vertical_wall() {
+        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(24.0, 100.0);
+        assert_eq!(result, Some(CollisionWall::Vertical));
     }
 
     #[test]
-    fn test_get_position() {
-        let motion = MotionPhysics::new([100.0, -39.5], 10.0, 10.0);
-        assert_eq!([100.0, -39.5], motion.get_position());
+    fn test_update_with_bounds_horizontal_wall() {
+        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(100.0, 14.0);
+        assert_eq!(result, Some(CollisionWall::Horizontal));
+    }
+
+    #[test]
+    fn test_update_with_bounds_no_collision() {
+        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(100.0, 100.0);
+        assert_eq!(result, None);
     }
 }
