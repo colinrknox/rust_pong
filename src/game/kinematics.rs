@@ -154,19 +154,6 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_set_velocity() {
-        // Arrange
-        let mut motion = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
-        assert_eq!([0.0, 0.0], motion.velocity);
-
-        // Act
-        motion.set_velocity([1.0, 1.0]);
-
-        // Assert
-        assert_eq!([1.0, 1.0], motion.velocity);
-    }
-
-    #[test]
     fn test_update_with_bounds_vertical_wall() {
         let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
 
@@ -191,5 +178,38 @@ mod test {
         let result = motion_p.update_with_bounds(100.0, 100.0);
 
         assert_eq!(result, None);
+    }
+
+    #[test]
+    fn test_has_collided() {
+        let obj1 = MotionObject::new([0.0, 0.0], 10.0, 10.0);
+        let obj2 = MotionObject::new([5.0, 2.0], 10.0, 10.0);
+
+        let result = obj1.has_collided(&obj2);
+
+        assert_eq!(true, result);
+    }
+
+    #[test]
+    fn test_has_not_collided() {
+        let obj1 = MotionObject::new([0.0, 0.0], 10.0, 10.0);
+        let obj2 = MotionObject::new([11.0, 2.0], 10.0, 10.0);
+
+        let result = obj1.has_collided(&obj2);
+
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_set_velocity() {
+        // Arrange
+        let mut motion = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
+        assert_eq!([0.0, 0.0], motion.velocity);
+
+        // Act
+        motion.set_velocity([1.0, 1.0]);
+
+        // Assert
+        assert_eq!([1.0, 1.0], motion.velocity);
     }
 }
