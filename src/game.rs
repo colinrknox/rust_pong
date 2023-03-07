@@ -1,3 +1,4 @@
+use crate::game::kinematics::MotionObject;
 use kinematics::MotionPhysics;
 use kinematics::Vec2d;
 use rand::prelude::*;
@@ -70,22 +71,22 @@ impl Pong {
         self.paddle_right.update();
         self.ball.update();
         self.resolve_collisions();
-        if self.ball.motion.get_motion_object().x < 1.0 {
+        if self.ball.get_x() < 1.0 {
             self.score_player_two += 1;
             self.reset_to_initial_conditions();
         }
-        if self.ball.motion.get_motion_object().x > PONG_WIDTH - BALL_SIZE - 1.0 {
+        if self.ball.get_x() > PONG_WIDTH - BALL_SIZE - 1.0 {
             self.score_player_one += 1;
             self.reset_to_initial_conditions();
         }
     }
 
     pub fn update_left_paddle_velocity(&mut self, velocity: Vec2d<f64>) {
-        self.paddle_left.motion.set_velocity(velocity);
+        self.paddle_left.set_velocity(velocity);
     }
 
     pub fn update_right_paddle_velocity(&mut self, velocity: Vec2d<f64>) {
-        self.paddle_right.motion.set_velocity(velocity);
+        self.paddle_right.set_velocity(velocity);
     }
 
     pub fn get_entities(&self) -> Vec<Box<&dyn GameObject>> {
@@ -99,7 +100,7 @@ impl Pong {
     fn resolve_collisions(&mut self) {
         let mut rng = thread_rng();
         let y_velocity = rng.gen_range(-BALL_VELOCITY_Y..BALL_VELOCITY_Y);
-        let sign = if self.ball.motion.get_velocity()[0] < 0.0 {
+        let sign = if self.ball.get_velocity_x() < 0.0 {
             1.0
         } else {
             -1.0
@@ -108,33 +109,27 @@ impl Pong {
             .ball
             .motion
             .get_motion_object()
-            .has_collided(&self.paddle_right.motion.get_motion_object())
+            .has_collided(&self.paddle_right.get_object())
         {
-            self.ball.motion.set_velocity([
+            self.ball.set_velocity([
                 (BALL_VELOCITY_MAX - y_velocity.powi(2)).sqrt() * sign,
                 y_velocity,
             ]);
-            self.set_ball_x(self.paddle_right.motion.get_motion_object().x);
+            self.ball.set_x(self.paddle_right.get_x());
         }
         if self
             .ball
             .motion
             .get_motion_object()
-            .has_collided(&self.paddle_left.motion.get_motion_object())
+            .has_collided(&self.paddle_left.get_object())
         {
-            self.ball.motion.set_velocity([
+            self.ball.set_velocity([
                 (BALL_VELOCITY_MAX - y_velocity.powi(2)).sqrt() * sign,
                 y_velocity,
             ]);
-            self.set_ball_x(
-                self.paddle_left.motion.get_motion_object().get_width()
-                    + self.paddle_left.motion.get_motion_object().x,
-            );
+            self.ball
+                .set_x(self.paddle_left.get_width() + self.paddle_left.get_x());
         }
-    }
-
-    fn set_ball_x(&mut self, x: f64) {
-        self.ball.motion.set_x(x)
     }
 
     fn reset_to_initial_conditions(&mut self) {
@@ -171,6 +166,22 @@ impl Paddle {
             },
         }
     }
+
+    fn set_velocity(&mut self, velocity: Vec2d<f64>) {
+        self.motion.set_velocity(velocity);
+    }
+
+    fn get_width(&self) -> f64 {
+        self.motion.get_motion_object().get_width()
+    }
+
+    fn get_x(&self) -> f64 {
+        self.motion.get_motion_object().x
+    }
+
+    fn get_object(&self) -> &MotionObject {
+        self.motion.get_motion_object()
+    }
 }
 
 impl Ball {
@@ -187,6 +198,22 @@ impl Ball {
             y_velocity,
         ]);
         ball
+    }
+
+    fn set_x(&mut self, x: f64) {
+        self.motion.set_x(x);
+    }
+
+    fn set_velocity(&mut self, velocity: Vec2d<f64>) {
+        self.motion.set_velocity(velocity);
+    }
+
+    fn get_velocity_x(&self) -> f64 {
+        self.motion.get_velocity()[0]
+    }
+
+    fn get_x(&self) -> f64 {
+        self.motion.get_motion_object().x
     }
 }
 
