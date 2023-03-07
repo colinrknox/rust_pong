@@ -85,6 +85,10 @@ impl MotionObject {
         return false;
     }
 
+    pub fn get_x(&self) -> f64 {
+        self.x
+    }
+
     pub fn get_height(&self) -> f64 {
         self.height
     }
@@ -150,7 +154,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_update_with_bounds_vertical_wall() {
+    fn test_update_with_bounds_vertical_wall_bottom() {
         let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
 
         let result = motion_p.update_with_bounds(24.0, 100.0);
@@ -159,8 +163,26 @@ mod test {
     }
 
     #[test]
-    fn test_update_with_bounds_horizontal_wall() {
+    fn test_update_with_bounds_vertical_wall_top() {
+        let mut motion_p = MotionPhysics::new([5.0, -1.0], 5.0, 5.0);
+
+        let result = motion_p.update_with_bounds(24.0, 100.0);
+
+        assert_eq!(result, Some(CollisionWall::Vertical));
+    }
+
+    #[test]
+    fn test_update_with_bounds_horizontal_wall_right() {
         let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+
+        let result = motion_p.update_with_bounds(100.0, 14.0);
+
+        assert_eq!(result, Some(CollisionWall::Horizontal));
+    }
+
+    #[test]
+    fn test_update_with_bounds_horizontal_wall_left() {
+        let mut motion_p = MotionPhysics::new([-0.01, 20.0], 5.0, 5.0);
 
         let result = motion_p.update_with_bounds(100.0, 14.0);
 
@@ -177,8 +199,18 @@ mod test {
     }
 
     #[test]
-    fn test_has_collided() {
+    fn test_has_collided_left() {
         let obj1 = MotionObject::new([0.0, 0.0], 10.0, 10.0);
+        let obj2 = MotionObject::new([5.0, 2.0], 10.0, 10.0);
+
+        let result = obj1.has_collided(&obj2);
+
+        assert_eq!(true, result);
+    }
+
+    #[test]
+    fn test_has_collided_right() {
+        let obj1 = MotionObject::new([15.0, 0.0], 10.0, 10.0);
         let obj2 = MotionObject::new([5.0, 2.0], 10.0, 10.0);
 
         let result = obj1.has_collided(&obj2);
@@ -194,6 +226,42 @@ mod test {
         let result = obj1.has_collided(&obj2);
 
         assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_get_x() {
+        let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
+
+        let result = obj.get_x();
+
+        assert_eq!(1.0, result);
+    }
+
+    #[test]
+    fn test_get_height() {
+        let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
+
+        let result = obj.get_height();
+
+        assert_eq!(5.0, result);
+    }
+
+    #[test]
+    fn test_get_width() {
+        let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
+
+        let result = obj.get_width();
+
+        assert_eq!(5.0, result);
+    }
+
+    #[test]
+    fn test_get_size() {
+        let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
+
+        let result = obj.get_size();
+
+        assert_eq!([1.0, 10.0, 5.0, 5.0], result);
     }
 
     #[test]

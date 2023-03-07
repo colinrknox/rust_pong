@@ -176,7 +176,7 @@ impl Paddle {
     }
 
     fn get_x(&self) -> f64 {
-        self.motion.get_motion_object().x
+        self.motion.get_motion_object().get_x()
     }
 
     fn get_object(&self) -> &MotionObject {
@@ -213,7 +213,7 @@ impl Ball {
     }
 
     fn get_x(&self) -> f64 {
-        self.motion.get_motion_object().x
+        self.motion.get_motion_object().get_x()
     }
 }
 
