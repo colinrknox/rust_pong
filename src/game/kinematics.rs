@@ -16,7 +16,7 @@ pub struct MotionObject {
     width: f64,
 }
 
-#[derive(Debug, PartialEq, Ord, PartialOrd, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum CollisionWall {
     Vertical,
     Horizontal,
