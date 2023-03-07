@@ -10,8 +10,8 @@ pub struct MotionPhysics {
 }
 
 pub struct MotionObject {
-    pub x: f64,
-    pub y: f64,
+    x: f64,
+    y: f64,
     height: f64,
     width: f64,
 }
@@ -121,10 +121,6 @@ impl MotionPhysics {
 
     pub fn set_x(&mut self, x_coord: f64) {
         self.object.x = x_coord;
-    }
-
-    pub fn set_y_coord(&mut self, y_coord: f64) {
-        self.object.y = y_coord;
     }
 
     pub fn set_coords(&mut self, coords: Vec2d<f64>) {
