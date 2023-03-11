@@ -266,4 +266,32 @@ mod test {
 
         assert_eq!([1.0, 1.0], motion.velocity);
     }
+
+    #[test]
+    fn test_motion_physics_set_x() {
+        let mut motion = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
+        let new_x = 4.0;
+        motion.set_x(4.0);
+        assert_eq!(motion.object.get_x(), 4.0);
+    }
+
+    #[test]
+    fn test_motion_physics_set_coords() {
+        todo!("Finish this test")
+    }
+
+    #[test]
+    fn test_motion_physics_get_motion_object() {
+        todo!("Finish this test")
+    }
+
+    #[test]
+    fn test_motion_physics_set_velocity() {
+        todo!("Finish this test")
+    }
+
+    #[test]
+    fn test_motion_physics_set_acceleration() {
+        todo!("Finish this test")
+    }
 }
