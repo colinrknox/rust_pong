@@ -155,46 +155,39 @@ mod test {
 
     #[test]
     fn test_update_with_bounds_vertical_wall_bottom() {
+        // Arrange
         let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
-
+        // Act
         let result = motion_p.update_with_bounds(24.0, 100.0);
-
+        // Assert
         assert_eq!(result, Some(CollisionWall::Vertical));
     }
 
     #[test]
     fn test_update_with_bounds_vertical_wall_top() {
         let mut motion_p = MotionPhysics::new([5.0, -1.0], 5.0, 5.0);
-
         let result = motion_p.update_with_bounds(24.0, 100.0);
-
         assert_eq!(result, Some(CollisionWall::Vertical));
     }
 
     #[test]
     fn test_update_with_bounds_horizontal_wall_right() {
         let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
-
         let result = motion_p.update_with_bounds(100.0, 14.0);
-
         assert_eq!(result, Some(CollisionWall::Horizontal));
     }
 
     #[test]
     fn test_update_with_bounds_horizontal_wall_left() {
         let mut motion_p = MotionPhysics::new([-0.01, 20.0], 5.0, 5.0);
-
         let result = motion_p.update_with_bounds(100.0, 14.0);
-
         assert_eq!(result, Some(CollisionWall::Horizontal));
     }
 
     #[test]
     fn test_update_with_bounds_no_collision() {
         let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
-
         let result = motion_p.update_with_bounds(100.0, 100.0);
-
         assert_eq!(result, None);
     }
 
@@ -231,49 +224,38 @@ mod test {
     #[test]
     fn test_get_x() {
         let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
-
         let result = obj.get_x();
-
         assert_eq!(1.0, result);
     }
 
     #[test]
     fn test_get_height() {
         let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
-
         let result = obj.get_height();
-
         assert_eq!(5.0, result);
     }
 
     #[test]
     fn test_get_width() {
         let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
-
         let result = obj.get_width();
-
         assert_eq!(5.0, result);
     }
 
     #[test]
     fn test_get_size() {
         let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
-
         let result = obj.get_size();
-
         assert_eq!([1.0, 10.0, 5.0, 5.0], result);
     }
 
     #[test]
     fn test_set_velocity() {
-        // Arrange
         let mut motion = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
-        assert_eq!([0.0, 0.0], motion.velocity);
+        assert_eq!([0.0, 0.0], motion.velocity); // Sanity check
 
-        // Act
         motion.set_velocity([1.0, 1.0]);
 
-        // Assert
         assert_eq!([1.0, 1.0], motion.velocity);
     }
 }
