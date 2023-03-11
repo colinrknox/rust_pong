@@ -117,8 +117,10 @@ impl MotionPhysics {
             self.object.x + self.velocity[0],
             self.object.y + self.velocity[1],
         ];
-        self.velocity[0] += self.acceleration[0];
-        self.velocity[1] += self.acceleration[1];
+        self.set_velocity([
+            self.velocity[0] + self.acceleration[0],
+            self.velocity[1] + self.acceleration[1],
+        ]);
         self.object
             .update_position_with_bounds(&mut new_position, height, width)
     }
@@ -153,44 +155,9 @@ impl MotionPhysics {
 mod test {
     use super::*;
 
-    #[test]
-    fn test_update_with_bounds_vertical_wall_bottom() {
-        // Arrange
-        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
-        // Act
-        let result = motion_p.update_with_bounds(24.0, 100.0);
-        // Assert
-        assert_eq!(result, Some(CollisionWall::Vertical));
-    }
-
-    #[test]
-    fn test_update_with_bounds_vertical_wall_top() {
-        let mut motion_p = MotionPhysics::new([5.0, -1.0], 5.0, 5.0);
-        let result = motion_p.update_with_bounds(24.0, 100.0);
-        assert_eq!(result, Some(CollisionWall::Vertical));
-    }
-
-    #[test]
-    fn test_update_with_bounds_horizontal_wall_right() {
-        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
-        let result = motion_p.update_with_bounds(100.0, 14.0);
-        assert_eq!(result, Some(CollisionWall::Horizontal));
-    }
-
-    #[test]
-    fn test_update_with_bounds_horizontal_wall_left() {
-        let mut motion_p = MotionPhysics::new([-0.01, 20.0], 5.0, 5.0);
-        let result = motion_p.update_with_bounds(100.0, 14.0);
-        assert_eq!(result, Some(CollisionWall::Horizontal));
-    }
-
-    #[test]
-    fn test_update_with_bounds_no_collision() {
-        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
-        let result = motion_p.update_with_bounds(100.0, 100.0);
-        assert_eq!(result, None);
-    }
-
+    /*
+     * MotionPhysics Tests
+     */
     #[test]
     fn test_has_collided_left() {
         let obj1 = MotionObject::new([0.0, 0.0], 10.0, 10.0);
@@ -247,6 +214,47 @@ mod test {
         let obj = MotionObject::new([1.0, 10.0], 5.0, 5.0);
         let result = obj.get_size();
         assert_eq!([1.0, 10.0, 5.0, 5.0], result);
+    }
+
+    /*
+     * MotionPhysics Tests
+     */
+    #[test]
+    fn test_update_with_bounds_vertical_wall_bottom() {
+        // Arrange
+        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+        // Act
+        let result = motion_p.update_with_bounds(24.0, 100.0);
+        // Assert
+        assert_eq!(result, Some(CollisionWall::Vertical));
+    }
+
+    #[test]
+    fn test_update_with_bounds_vertical_wall_top() {
+        let mut motion_p = MotionPhysics::new([5.0, -1.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(24.0, 100.0);
+        assert_eq!(result, Some(CollisionWall::Vertical));
+    }
+
+    #[test]
+    fn test_update_with_bounds_horizontal_wall_right() {
+        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(100.0, 14.0);
+        assert_eq!(result, Some(CollisionWall::Horizontal));
+    }
+
+    #[test]
+    fn test_update_with_bounds_horizontal_wall_left() {
+        let mut motion_p = MotionPhysics::new([-0.01, 20.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(100.0, 14.0);
+        assert_eq!(result, Some(CollisionWall::Horizontal));
+    }
+
+    #[test]
+    fn test_update_with_bounds_no_collision() {
+        let mut motion_p = MotionPhysics::new([10.0, 20.0], 5.0, 5.0);
+        let result = motion_p.update_with_bounds(100.0, 100.0);
+        assert_eq!(result, None);
     }
 
     #[test]
