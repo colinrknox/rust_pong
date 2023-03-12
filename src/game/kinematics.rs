@@ -272,9 +272,8 @@ mod test {
     #[test]
     fn test_motion_physics_set_x() {
         let mut motion = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
-        let new_x = 4.0;
         motion.set_x(4.0);
-        assert_eq!(motion.object.get_x(), 4.0);
+        assert_eq!(4.0, motion.object.get_x());
     }
 
     #[test]
@@ -300,6 +299,8 @@ mod test {
 
     #[test]
     fn test_motion_physics_set_acceleration() {
-        todo!("Finish this test")
+        let mut obj = MotionPhysics::new([10.0, 10.0], 3.0, 9.0);
+        obj.set_acceleration([1.0, -2.0]);
+        assert_eq!([1.0, -2.0], obj.acceleration);
     }
 }
