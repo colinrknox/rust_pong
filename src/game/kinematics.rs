@@ -3,12 +3,14 @@ pub type Vec2d<T> = [T; 2];
 /// # MotionPhysics
 ///
 /// Uses the basics of kinematics to compute motion
+#[derive(Debug, PartialEq)]
 pub struct MotionPhysics {
     object: MotionObject,
     velocity: Vec2d<f64>,
     acceleration: Vec2d<f64>,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct MotionObject {
     x: f64,
     y: f64,
@@ -284,7 +286,9 @@ mod test {
 
     #[test]
     fn test_motion_physics_get_motion_object() {
-        todo!("Finish this test")
+        let obj = MotionPhysics::new([0.0, 10.0], 5.0, 5.0);
+        let motion_obj = obj.get_motion_object();
+        assert_eq!(obj.object, *motion_obj);
     }
 
     #[test]
