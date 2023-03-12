@@ -293,7 +293,9 @@ mod test {
 
     #[test]
     fn test_motion_physics_set_velocity() {
-        todo!("Finish this test")
+        let mut obj = MotionPhysics::new([10.0, 10.0], 8.0, 8.0);
+        obj.set_velocity([2.0, -1.0]);
+        assert_eq!([2.0, -1.0], obj.velocity);
     }
 
     #[test]
