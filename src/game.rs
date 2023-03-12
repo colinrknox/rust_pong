@@ -1,9 +1,10 @@
-use crate::game::kinematics::MotionObject;
 use kinematics::MotionPhysics;
 use kinematics::Vec2d;
+use object::Object;
 use rand::prelude::*;
 
 pub mod kinematics;
+pub mod object;
 
 // Constants for object properties like the paddles, ball, game size etc.
 pub const PADDLE_VELOCITY: f64 = 7.0;
@@ -179,7 +180,7 @@ impl Paddle {
         self.motion.get_motion_object().get_x()
     }
 
-    fn get_object(&self) -> &MotionObject {
+    fn get_object(&self) -> &Object {
         self.motion.get_motion_object()
     }
 }
