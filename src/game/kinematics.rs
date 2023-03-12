@@ -277,7 +277,9 @@ mod test {
 
     #[test]
     fn test_motion_physics_set_coords() {
-        todo!("Finish this test")
+        let mut obj = MotionPhysics::new([0.0, 0.0], 10.0, 10.0);
+        obj.set_coords([10.0, -10.0]);
+        assert_eq!([10.0, -10.0], [obj.object.x, obj.object.y]);
     }
 
     #[test]
