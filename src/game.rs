@@ -1,9 +1,7 @@
-use kinematics::MotionPhysics;
 use kinematics::Vec2d;
 use object::Object;
 use rand::prelude::*;
 
-pub mod kinematics;
 pub mod object;
 
 // Constants for object properties like the paddles, ball, game size etc.
@@ -39,12 +37,12 @@ pub struct Pong {
 }
 
 pub struct Ball {
-    motion: MotionPhysics,
+    object: Object,
     color: [f32; 4],
 }
 
 pub struct Paddle {
-    motion: MotionPhysics,
+    object: Object,
     color: [f32; 4],
 }
 
@@ -108,8 +106,7 @@ impl Pong {
         };
         if self
             .ball
-            .motion
-            .get_motion_object()
+            .object
             .has_collided(&self.paddle_right.get_object())
         {
             self.ball.set_velocity([
@@ -120,8 +117,7 @@ impl Pong {
         }
         if self
             .ball
-            .motion
-            .get_motion_object()
+            .object
             .has_collided(&self.paddle_left.get_object())
         {
             self.ball.set_velocity([
@@ -144,7 +140,7 @@ impl Paddle {
     pub fn new(p_type: PaddleType) -> Self {
         match p_type {
             PaddleType::Left => Paddle {
-                motion: MotionPhysics::new(
+                object: Object::new(
                     [
                         GOAL_BUFFER - PADDLE_WIDTH,
                         (PONG_HEIGHT - PADDLE_HEIGHT) / 2.0,
@@ -155,7 +151,7 @@ impl Paddle {
                 color: GAME_OBJECT_COLOR,
             },
             PaddleType::Right => Paddle {
-                motion: MotionPhysics::new(
+                object: Object::new(
                     [
                         PONG_WIDTH - GOAL_BUFFER,
                         (PONG_HEIGHT - PADDLE_HEIGHT) / 2.0,
@@ -169,32 +165,32 @@ impl Paddle {
     }
 
     fn set_velocity(&mut self, velocity: Vec2d<f64>) {
-        self.motion.set_velocity(velocity);
+        self.object.set_velocity(velocity);
     }
 
     fn get_width(&self) -> f64 {
-        self.motion.get_motion_object().get_width()
+        self.object.get_width()
     }
 
     fn get_x(&self) -> f64 {
-        self.motion.get_motion_object().get_x()
+        self.object.get_x()
     }
 
     fn get_object(&self) -> &Object {
-        self.motion.get_motion_object()
+        &self.object
     }
 }
 
 impl Ball {
     pub fn new() -> Ball {
         let mut ball = Ball {
-            motion: MotionPhysics::new([PONG_WIDTH / 2.0, PONG_HEIGHT / 2.0], BALL_SIZE, BALL_SIZE),
+            object: Object::new([PONG_WIDTH / 2.0, PONG_HEIGHT / 2.0], BALL_SIZE, BALL_SIZE),
             color: GAME_OBJECT_COLOR,
         };
         let mut rng = thread_rng();
         let y_velocity: f64 = rng.gen_range(-BALL_VELOCITY_Y..BALL_VELOCITY_Y);
         let sign = if y_velocity < 0.0 { -1.0 } else { 1.0 };
-        ball.motion.set_velocity([
+        ball.object.set_velocity([
             (BALL_VELOCITY_MAX - y_velocity.powi(2)).sqrt() * sign,
             y_velocity,
         ]);
@@ -202,25 +198,25 @@ impl Ball {
     }
 
     fn set_x(&mut self, x: f64) {
-        self.motion.set_x(x);
+        self.object.set_x(x);
     }
 
     fn set_velocity(&mut self, velocity: Vec2d<f64>) {
-        self.motion.set_velocity(velocity);
+        self.object.set_velocity(velocity);
     }
 
     fn get_velocity_x(&self) -> f64 {
-        self.motion.get_velocity()[0]
+        self.object.get_velocity()[0]
     }
 
     fn get_x(&self) -> f64 {
-        self.motion.get_motion_object().get_x()
+        self.object.get_x()
     }
 }
 
 impl GameObject for Paddle {
     fn get_size(&self) -> [f64; 4] {
-        self.motion.get_motion_object().get_size()
+        self.object.get_size()
     }
 
     fn get_color(&self) -> [f32; 4] {
@@ -228,13 +224,13 @@ impl GameObject for Paddle {
     }
 
     fn update(&mut self) {
-        self.motion.update_with_bounds(PONG_HEIGHT, PONG_WIDTH);
+        self.object.update_with_bounds(PONG_HEIGHT, PONG_WIDTH);
     }
 }
 
 impl GameObject for Ball {
     fn get_size(&self) -> [f64; 4] {
-        self.motion.get_motion_object().get_size()
+        self.object.get_size()
     }
 
     fn get_color(&self) -> [f32; 4] {
@@ -242,18 +238,18 @@ impl GameObject for Ball {
     }
 
     fn update(&mut self) {
-        if let Some(wall) = self.motion.update_with_bounds(PONG_HEIGHT, PONG_WIDTH) {
+        if let Some(wall) = self.object.update_with_bounds(PONG_HEIGHT, PONG_WIDTH) {
             match wall {
-                kinematics::CollisionWall::Vertical => {
-                    self.motion.set_velocity([
-                        self.motion.get_velocity()[0],
-                        -1.0 * self.motion.get_velocity()[1],
+                object::CollisionWall::Vertical => {
+                    self.object.set_velocity([
+                        self.object.get_velocity()[0],
+                        -1.0 * self.object.get_velocity()[1],
                     ]);
                 }
-                kinematics::CollisionWall::Horizontal => {
-                    self.motion.set_velocity([
-                        -1.0 * self.motion.get_velocity()[0],
-                        self.motion.get_velocity()[1],
+                object::CollisionWall::Horizontal => {
+                    self.object.set_velocity([
+                        -1.0 * self.object.get_velocity()[0],
+                        self.object.get_velocity()[1],
                     ]);
                 }
             }
