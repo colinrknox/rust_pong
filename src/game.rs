@@ -1,5 +1,5 @@
-use kinematics::Vec2d;
 use object::Object;
+use object::Vec2d;
 use rand::prelude::*;
 
 pub mod object;
